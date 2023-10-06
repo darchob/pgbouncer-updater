@@ -1,0 +1,45 @@
+project_name: PGBouncer-updater
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    id: linux-binaries
+    main: ./cmd
+    binary: pgbouncer-updater
+    goarch:
+      - amd64
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+    id: windows-binaries
+    main: ./cmd
+    binary: pgbouncer-updater
+    goarch:
+      - amd64
+      
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^.'
+
+nfpms:
+- maintainer: Bochard Jonathan <jonathan.bochar@jbdev.fr>
+  description: Use to update PGBouncer userlist from database
+  license: MIT
+
